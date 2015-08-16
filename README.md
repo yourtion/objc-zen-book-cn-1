@@ -89,7 +89,6 @@
 ## Swift
 
 在 2014 年 6 月 6 日，苹果发布了面向 iOS 和 Mac 开发的新语言： Swift。
-
 这个新语言与 Objective-C 截然不同。所以，我们改变了写这本书的计划。我们决定发布这本书当前的状态，而不是继续书写我们原来计划写下去的主题。
 
 Objective-C 没有消失，但是现在用一个慢慢失去关注的语言来继续写这本书并不是一个明智的选择。
@@ -536,17 +535,13 @@ NSMutableArray *aMutableArray = [@[] mutableCopy];
 
 效率方面，一个不必要的不可变对象被创建后立马被废弃了；虽然这并不会让你的 App 变慢（除非这个方法被频繁调用），但是确实没必要为了少打几个字而这样做。
 
-可读性方面，存在两个问题：
-
-第一个问题是当你浏览代码并看见 `@[]` 的时候，你首先联想到的是 `NSArray` 实例，但是在这种情形下你需要停下来深思熟虑的检查；另一个问题是，一些新手以他的水平看到你的代码后可能会对这是一个可变对象还是一个不可变对象产生分歧。他/她可能不熟悉可变拷贝构造的含义（这并不是说这个知识不重要）。
-
-当然，不存在绝对的错误，我们只是讨论代码的可用性（包括可读性)。
+可读性方面，存在两个问题：第一个问题是当你浏览代码并看见 `@[]` 的时候，你首先联想到的是 `NSArray` 实例，但是在这种情形下你需要停下来深思熟虑的检查；另一个问题是，一些新手以他的水平看到你的代码后可能会对这是一个可变对象还是一个不可变对象产生分歧。他/她可能不熟悉可变拷贝构造的含义（这并不是说这个知识不重要）。当然，不存在绝对的错误，我们只是讨论代码的可用性（包括可读性)。
 
 #  类 
 
 ##  类名
 
-类名应该以**三**个大写字母作为前缀（双字母前缀为 Apple 的类预留）。尽管这个规范看起来有些古怪，但是这样做可以减少 Objective-C 没有命名空间所带来的问题。
+类名应该以**三**个大写字母作为前缀（双字母前缀为 Apple 的类预留）。尽管这个规范看起来有些古怪，但是这样做可以减少 Objective-c 没有命名空间所带来的问题。
 
 一些开发者在定义模型对象时并不遵循这个规范（对于 Core Data 对象，我们更应该遵循这个规范）。我们建议在定义 Core Data 对象时严格遵循这个约定，因为最终你可能需要把你的 Managed Object Model（托管对象模型）与其他（第三方库）的 MOMs（Managed Object Model）合并。
 
@@ -561,9 +556,7 @@ NSMutableArray *aMutableArray = [@[] mutableCopy];
 
 推荐的代码组织方式是将 `dealloc` 方法放在实现文件的最前面（直接在  `@synthesize` 以及 `@dynamic` 之后），`init` 应该跟在 `dealloc` 方法后面。
 
-如果有多个初始化方法， 指定初始化方法 (designated initializer) 应该放在最前面，间接初始化方法 (secondary initializer) 跟在后面，这样更有逻辑性。
-
-如今有了 ARC，dealloc 方法几乎不需要实现，不过把 init 和 dealloc 放在一起可以从视觉上强调它们是一对的。通常，在 init 方法中做的事情需要在 dealloc 方法中撤销。
+如果有多个初始化方法， 指定初始化方法 (designated initializer) 应该放在最前面，间接初始化方法 (secondary initializer) 跟在后面，这样更有逻辑性。如今有了 ARC，dealloc 方法几乎不需要实现，不过把 init 和 dealloc 放在一起可以从视觉上强调它们是一对的。通常，在 init 方法中做的事情需要在 dealloc 方法中撤销。
 
 `init` 方法应该是这样的结构：
 
@@ -581,8 +574,9 @@ NSMutableArray *aMutableArray = [@[] mutableCopy];
 
 为什么设置 `self` 为 `[super init]` 的返回值，以及中间发生了什么呢？这是一个十分有趣的话题。
 
-我们退一步讲：我们常常写 `[[NSObject alloc] init]` 这样的代码，从而淡化了 `alloc` 和 `init` 的区别。Objective-C 的这个特性叫做 *两步创建* 。 这意味着申请分配内存和初始化被分离成两步，`alloc` 和 `init`。
+我们退一步讲：我们常常写 `[[NSObject alloc] init]` 这样的代码，从而淡化了 `alloc` 和 `init` 的区别。Objective-C 的这个特性叫做 *两步创建* 。 
 
+这意味着申请分配内存和初始化被分离成两步，`alloc` 和 `init`。
 - `alloc` 负责创建对象，这个过程包括分配足够的内存来保存对象，写入 `isa` 指针，初始化引用计数，以及重置所有实例变量。
 - `init` 负责初始化对象，这意味着使对象处于可用状态。这通常意味着为对象的实例变量赋予合理有用的值。
 
@@ -591,7 +585,6 @@ NSMutableArray *aMutableArray = [@[] mutableCopy];
 按照惯例，为了完成两步创建，新创建的实例第一个被调用的方法将是 `init` 方法。注意，`NSObject` 在实现 `init` 时，只是简单的返回了 `self`。
 
 关于 `init` 的约定还有一个重要部分：这个方法可以（并且应该）通过返回 `nil` 来告诉调用者，初始化失败了；初始化可能会因为各种原因失败，比如一个输入的格式错误了，或者另一个需要的对象初始化失败了。
-
 这样我们就能理解为什么总是需要调用 `self = [super init]`。如果你的父类说初始化自己的时候失败了，那么你必须假定你正处于一个不稳定的状态，因此在你的实现里不要继续你自己的初始化并且也返回 `nil`。如果不这样做，你可能会操作一个不可用的对象，它的行为是不可预测的，最终可能会导致你的程序崩溃。
 
 `init` 方法在被调用的时候可以通过重新给 `self` 重新赋值来返回另一个实例，而非调用的那个实例。例如[类簇](#类簇)，还有一些 Cocoa 类为相等的（不可变的）对象返回同一个实例。
@@ -655,11 +648,11 @@ designated 初始化方法是提供所有的参数，secondary 初始化方法�
 3. 定义一个新的 designated initializer
 
 
-第一个方案是最简单的：你不需要增加类的任何初始化逻辑，只需要依照父类的 designated initializer。
+第一个方案是最简单的：你不需要增加类的任何初始化逻辑，只需要依照父类的designated initializer。
 
 当你希望提供额外的初始化逻辑的时候，你可以重载 designated initializer。你只需要重载你的直接的超类的 designated initializer 并且确认你的实现调用了超类的方法。
 
-你一个典型的例子是你创造`UIViewController`子类的时候重载 `initWithNibName:bundle:` 方法。
+你一个典型的例子是你创造`UIViewController`子类的时候重载`initWithNibName:bundle:`方法。
 
 ```objective-c
 @implementation ZOCViewController
@@ -689,7 +682,6 @@ designated 初始化方法是提供所有的参数，secondary 初始化方法�
 
 
 很多开发者忽略了后两步，这不仅仅是一个粗心的问题，而且这样违反了框架的规则，而且可能导致不确定的行为和bug。
-
 让我们看看正确的实现的例子：
 
 ```objective-c
@@ -719,15 +711,15 @@ designated 初始化方法是提供所有的参数，secondary 初始化方法�
 如果你没重载 `initWithNibName:bundle:` ，而且调用者决定用这个方法初始化你的类(这是完全合法的)。 `initWithNews:` 永远不会被调用，所以导致了不正确的初始化流程，你的类特定的初始化逻辑没有被执行。
 
 
+
+
 即使可以推断那个方法是 designate initializer，也最好清晰地明确它（未来的你或者其他开发者在改代码的时候会感谢你的）。
 
 你应该考虑来用这两个策略（不是互斥的）：第一个是你在文档中明确哪一个初始化方法是 designated 的，你可以用编译器的指令 `__attribute__((objc_designated_initializer))`  来标记你的意图。
 
 用这个编译指令的时候，编译器会来帮你。如果你的新的 designate initializer 没有调用你超类的 designated initializer，那么编译器会发出警告。
 
-然而，当没有调用类的  designated initializer 的时候（并且依次提供必要的参数），并且调用其他父类中的 designated initialize 的时候，会变成一个不可用的状态。参考之前的例子，当实例化一个 `ZOCNewsViewController`  展示一个新闻而那条新闻没有展示的话，就会毫无意义。
-
-这个情况下你应该只需要让其他的 designated initializer 失效，来强制调用一个非常特别的 designated initializer。通过使用另外一个编译器指令  `__attribute__((unavailable("Invoke the designated initializer"))) ` 来修饰一个方法，通过这个属性，会让你在试图调用这个方法的时候产生一个编译错误。
+然而，当没有调用类的  designated initializer 的时候（并且依次提供必要的参数），并且调用其他父类中的 designated initialize 的时候，会变成一个不可用的状态。参考之前的例子，当实例化一个 `ZOCNewsViewController`  展示一个新闻而那条新闻没有展示的话，就会毫无意义。这个情况下你应该只需要让其他的 designated initializer 失效，来强制调用一个非常特别的 designated initializer。通过使用另外一个编译器指令  `__attribute__((unavailable("Invoke the designated initializer"))) ` 来修饰一个方法，通过这个属性，会让你在试图调用这个方法的时候产生一个编译错误。
 
 这是之前的例子相关的实现的头文件(这里使用宏来让代码没有那么啰嗦)
 
@@ -748,11 +740,8 @@ designated 初始化方法是提供所有的参数，secondary 初始化方法�
 
 
 不过一个例外是一个对象是否遵守 `NSCoding` 协议，并且它通过方法 `initWithCoder:` 初始化。
-
 我们应该看超类是否符合 `NSCoding` 协议来区别对待。
-
 如果符合，如果你只是调用 `[super initWithCoder:]` ，你会可能有一个共享的初始化代码在 designated initializer 里面，一个好的方法是把这些代码放在私有方法里面(比如  `p_commonInit` )。
-
 当你的超类不符合`NSCoding` 协议的时候，推荐把 `initWithCoder:` 作为 secondary initializer 来对待，并且调用 `self` 的 designated initializer。 注意这是违反 Apple 的 [Archives and Serializations Programming Guide](https://developer.apple.com/library/mac/documentation/cocoa/Conceptual/Archiving/Articles/codingobjects.html#//apple_ref/doc/uid/20000948-BCIHBJDE)  上面写的：
 
 
@@ -765,7 +754,6 @@ designated 初始化方法是提供所有的参数，secondary 初始化方法�
 
 
 正如之前的描述，secondary initializer 是一种提供默认值、行为到 designated initializer的方法。也就是说，在这样的方法里面你不应该有初始化实例变量的操作，并且你应该一直假设这个方法不会得到调用。我们保证的是唯一被调用的方法是 designated initializer。
-
 这意味着你的 secondary initializer 总是应该调用 Designated initializer  或者你自定义(上面的第三种情况：自定义Designated initializer)的 `self`的 designated initializer。有时候，因为错误，可能打成了  `super`，这样会导致不符合上面提及的初始化顺序（在这个特别的例子里面，是跳过当前类的初始化）
 
 #####  参考
@@ -780,9 +768,7 @@ designated 初始化方法是提供所有的参数，secondary 初始化方法�
 ### instancetype 
 
 
-我们经常忽略 Cocoa 充满了约定，并且这些约定可以帮助编译器变得更加聪明。无论编译器是否遭遇 `alloc` 或者 `init` 方法，他会知道，即使返回类型都是 `id` ，这些方法总是返回接受到的类类型的实例。因此，它允许编译器进行类型检查。（比如，检查方法返回的类型是否合法）。
-
-Clang的这个好处来自于 [related result type](http://clang.llvm.org/docs/LanguageExtensions.html#related-result-types)， 意味着：
+我们经常忽略 Cocoa 充满了约定，并且这些约定可以帮助编译器变得更加聪明。无论编译器是否遭遇 `alloc` 或者 `init` 方法，他会知道，即使返回类型都是 `id` ，这些方法总是返回接受到的类类型的实例。因此，它允许编译器进行类型检查。（比如，检查方法返回的类型是否合法）。Clang的这个好处来自于 [related result type](http://clang.llvm.org/docs/LanguageExtensions.html#related-result-types)， 意味着：
 
 
 > messages sent to one of alloc and init methods will have the same static type as the instance of the receiver class （发送到 alloc 或者 init 方法的消息会有同样的静态类型检查是否为接受类的实例。）
@@ -885,7 +871,6 @@ Class clusters 在 Apple 的Framework 中广泛使用：一些明显的例子比
 ####   单例
 
 如果可能，请尽量避免使用单例而是依赖注入。
-
 然而，如果一定要用，请使用一个线程安全的模式来创建共享的实例。对于 GCD，用 `dispatch_once()` 函数就可以咯。
 
 
@@ -923,11 +908,8 @@ Class clusters 在 Apple 的Framework 中广泛使用：一些明显的例子比
 
 
 经典的单例对象是：一个设备的GPS以及它的加速度传感器(也称动作感应器)。
-
 虽然单例对象可以子类化，但这种方式能够有用的情况非常少见。
-
 必须有证据表明，给定类的接口趋向于作为单例来使用。
-
 所以，单例通常公开一个`sharedInstance`的类方法就已经足够了，没有任何的可写属性需要被暴露出来。
 
 尝试着把单例作为一个对象的容器，在代码或者应用层面上共享，是一个糟糕和丑陋的设计。
@@ -952,7 +934,8 @@ NSString * text;
 ```
 
 
-（注意：这个习惯和常量不同，这是主要从常用和可读性考虑。 C++ 的开发者偏好从变量名中分离类型，作为类型它应该是 `NSString*` （对于从堆中分配的对象，对于C++是能从栈上分配的）格式。）
+（注意：这个习惯和常量不同，这是主要从常用和可读性考虑。 C++ 的开发者偏好从变量名中分离类型，作为类型它应该是
+`NSString*` （对于从堆中分配的对象，对于C++是能从栈上分配的）格式。）
 
 
 使用属性的自动同步 (synthesize) 而不是手动的  `@synthesize` 语句，除非你的属性是 protocol 的一部分而不是一个完整的类。如果 Xcode 可以自动同步这些变量，就让它来做吧。否则只会让你抛开 Xcode 的优点，维护更冗长的代码。
@@ -1262,9 +1245,9 @@ UIApplication.sharedApplication.delegate;
 
 #  Protocols
 
-在 Objective-C 的世界里面经常错过的一个东西是抽象接口。接口（interface）这个词通常指一个类的 `.h` 文件，但是它在 Java 程序员眼里有另外的含义： 一系列不依赖具体实现的方法的定义。(译者注：在 Objective-C 中，类的接口对应在.m文件中都会有具体的实现，但 Java 中接口更接近于 Objective-C 中的抽象接口, 或者说是协议(protocol))
+在 Objective-C 的世界里面经常错过的一个东西是抽象接口。接口（interface）这个词通常指一个类的 `.h` 文件，但是它在 Java 程序员眼里有另外的含义： 一系列不依赖具体实现的方法的定义。(译者注：在OC中，类的接口对应在.m文件中都会有具体的实现，但Java中接口更接近于OC中的抽象接口或者说协议(protocol))
 
-在 Objective-C 里是通过 protocol 来实现抽象接口的。因为历史原因，protocol （使用方法类似 Java 的接口）并没有大量地在 Objective-C的代码中使用也没有在社区中普及(指的是那种像 Java 程序员使用接口那样来使用 protocol 的方式)。一个主要原因是大多数的 Apple 开发的代码没有采用这种的方式，而几乎所有的开发者都是遵从 Apple 的模式以及指南。Apple 几乎只是在委托模式下使用 protocol。
+在 Objective-C 里是通过 protocol 来实现抽象接口的。因为历史原因，protocol （使用方法类似java的接口）并没有大量地在Objective-C的代码中使用也没有在社区中普及(指的是那种像Java程序员使用接口那样来使用protocol的方式)。一个主要原因是大多数的 Apple 开发的代码没有采用这种的方式，而几乎所有的开发者都是遵从 Apple 的模式以及指南。Apple 几乎只是在委托模式下使用 protocol。
 
 但是抽象接口的概念很强大，在计算机科学的历史中颇有渊源，没有理由不在 Objective-C 中使用。
 
@@ -1272,7 +1255,7 @@ UIApplication.sharedApplication.delegate;
 
 这个例子是在实现一个 RSS 阅读器（它可是经常在技术面试中作为一个测试题呢）。
 
-要求很简单：在 TableView 中展示一个远程的 RSS 订阅。
+要求很简单：在TableView中展示一个远程的RSS订阅。
 
 一个幼稚的方法是创建一个 `UITableViewController` 的子类，并且把所有的检索订阅数据，解析以及展示的逻辑放在一起，或者说是一个 MVC (Massive View Controller)。这可以跑起来，但是它的设计非常糟糕，不过它足够过一些要求不高的面试了。
 
@@ -1328,7 +1311,7 @@ UIApplication.sharedApplication.delegate;
 ```
 
 
-我要说，这是一个处理 RSS 业务的完全合理而恰当的 protocol。这个 view controller 在 public 接口中将遵循这个 protocol：
+我要说，这是一个处理RSS业务的完全合理而恰当的protocol。这个ViewController在Public接口中将遵循这个protocol：
 
 ```objective-c
 @interface ZOCTableViewController : UITableViewController <ZOCFeedParserDelegate>
@@ -1392,8 +1375,7 @@ view controller 的职责应该是“显示某些东西提供的内容”，但�
 
 
 因为 `ZOCFeedParser` 实现了 `ZOCFeedParserProtocol`，它需要实现所有的`required`方法。
-
-从这点来看 view controller 能接受任何遵循该协议的对象，只要确保所有的对象都会响应`start`和`stop`方法并通过`delegate`属性提供信息(译者注：因为 protocol 默认情况下所有的方法定义都是`required`的)。对指定的对象而言，这就是 view controller 所要知道的一切,且不需要知道其实现的细节。
+从这点来看 viewController能接受任何遵循该协议的对象，只要确保所有的对象都会响应`start`和`stop`方法并通过`delegate`属性提供信息(译者注：因为protocol默认情况下所有的方法定义都是`required`的)。对指定的对象而言，这就是viewController所要知道的一切,且不需要知道其实现的细节。
 
 
 ```objective-c
@@ -1642,9 +1624,7 @@ NSURL *url = ({
 
 ### 忽略没用使用变量的编译警告
 
-告诉你申明的变量它将不会被使用，这种做法很有用。大多数情况下，你希望移除这些引用来（稍微地）提高性能，但是有时候你希望保留它们。
-
-为什么？或许它们以后有用，或者有些特性只是暂时移除。无论如何，一个消除这些警告的好方法是用相关语句进行注解，使用 `#pragma unused()`:
+告诉你申明的变量它将不会被使用，这种做法很有用。大多数情况下，你希望移除这些引用来（稍微地）提高性能，但是有时候你希望保留它们。为什么？或许它们以后有用，或者有些特性只是暂时移除。无论如何，一个消除这些警告的好方法是用相关语句进行注解，使用 `#pragma unused()`:
 
 ```objective-c
 - (NSInteger)giveMeFive
@@ -1824,7 +1804,7 @@ Block 是 Objective-C 版本的 lambda 或者 closure（闭包）。
 
 当一个 block 被复制后，`__block` 声明的栈变量的引用被复制到了堆里，复制完成之后，无论是栈上的block还是刚刚产生在堆上的block(栈上block的副本)都会引用该变量在堆上的副本。
 
-译者加
+(下面代码是译者加的)
 
 ```objective-c
    ...
@@ -1983,7 +1963,9 @@ MyViewController *myController = [[MyViewController alloc] init...];
 
 **方案 3. 在 block 外定义一个 `__weak` 的 引用到 self，并在在 block 内部通过这个弱引用定义一个 `__strong`  的引用**
 
-你可能会想，首先，这是避免 retain cycle  警告的一个技巧。这不是重点，这个 self 的强引用是在block 执行时 被创建的，但是否使用 self 在 block 定义时就已经定下来了， 因此self (在block执行时) 会被 retain。
+你可能会想，首先，这是避免 retain cycle  警告的一个技巧。
+
+这不是重点，这个 self 的强引用是在block 执行时 被创建的，但是否使用 self 在 block 定义时就已经定下来了， 因此self (在block执行时) 会被 retain.
 
 [Apple 文档][blocks_caveat1] 中表示 "为了 non-trivial cycles ，你应该这样" ：
 
@@ -2098,28 +2080,27 @@ myObj.myBlock =  ^{
 
 ## 委托和数据源
 
+[委托模式](https://www.wikiwand.com/zh/%E5%A7%94%E6%89%98%E6%A8%A1%E5%BC%8F) 是 Apple 的框架里面使用广泛的模式，同时它是四人帮的书“设计模式”中的重要模式之一。委托代理模式是单向的，消息的发送方（委托方）需要知道接收方（代理方）是谁，反过来就没有必要了。对象之间耦合较松，发送方仅需知道它的代理方是否遵守相关 protocol 即可。
 
-委托是 Apple 的框架里面使用广泛的模式，同时它是一个重要的 四人帮的书“设计模式”中的模式。委托模式是单向的，消息的发送方（委托方）需要知道接收方（委托），反过来就不是了。对象之间没有多少耦合，因为发送方只要知道它的委托实现了对应的 protocol。
+本质上，委托代理模式仅需要代理方提供一些回调方法，即代理方需要实现一系列空返回值的方法。
 
-本质上，委托模式只需要委托提供一些回调方法，就是说委托实现了一系列空返回值的方法。
+不幸的是 Apple 的 API 并没有遵守这个原则，开发者也效仿 Apple 进入了一个误区。典型的例子就是 [UITableViewDelegate](https://developer.apple.com/library/ios/documentation/uikit/reference/UITableViewDelegate_Protocol/Reference/Reference.html) 协议。
 
-不幸的是 Apple 的 API 并没有尊重这个原则，开发者也效仿 Apple 进入了歧途。一个典型的例子是 [UITableViewDelegate](https://developer.apple.com/library/ios/documentation/uikit/reference/UITableViewDelegate_Protocol/Reference/Reference.html) 协议。
-
-一些有 void 返回类型的方法就像回调
+它的一些方法返回 void 类型，就像我们所说的回调：
 
 ```objective-c
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 - (void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath;
 ```
 
-但是其他的不是
+但是其他的就不是那么回事：
 
 ```objective-c
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender;
 ```
 
-当委托者询问委托对象一些信息的时候，这就暗示着信息是从委托对象流向委托者，而不会反过来。 这个概念就和委托模式有些不同，它是一个另外的模式：数据源。
+当委托者询问代理者一些信息的时候，这就暗示着信息是从代理者流向委托者而非相反的过程。 这(译者注：委托者 ==Data==> 代理者)是概念性的不同，须用另一个新的名字来描述这种模式：数据源模式。
 
 可能有人会说 Apple 有一个 [UITableViewDataSouce](https://developer.apple.com/library/ios/documentation/uikit/reference/UITableViewDataSource_Protocol/Reference/Reference.html)  protocol 来做这个（虽然使用委托模式的名字），但是实际上它的方法是用来提供真实的数据应该如何被展示的信息的。
 
@@ -2132,8 +2113,8 @@ myObj.myBlock =  ^{
 
 为了分离概念，我们应该这样做：
 
-* 委托模式：事件发生的时候，委托者需要通知委托
-* 数据源模式: 委托方需要从数据源对象拉取数据
+* 委托模式(delegate pattern)：事件发生的时候，委托者需要通知代理者。
+* 数据源模式(datasource pattern): 委托者需要从数据源对象拉取数据。
 
 
 这个是实际的例子：
@@ -2149,7 +2130,6 @@ myObj.myBlock =  ^{
 - (ZOCUserCredentials *)credentialsForSignUpViewController:(ZOCSignUpViewController *)controller;
 @end
 
-@protocol ZOCSignUpViewControllerDataSource <NSObject>
 
 @interface ZOCSignUpViewController : UIViewController
 
@@ -2161,26 +2141,26 @@ myObj.myBlock =  ^{
 ```
 
 
-在上面的例子里面，委托方法需要总是有一个调用方作为第一个参数，否则委托对象可能被不能区别不同的委托者的实例。此外，如果调用者没有被传递到委托对象，那么就没有办法让一个委托对象处理两个不同的委托者了。所以，下面这样的方法就是人神共愤的：
+代理方法必须以调用者(即委托者)作为第一个参数，就像上面的例子一样。否则代理者无法区分不同的委托者实例。换句话说，调用者(委托者)没有被传递给代理，那就没有方法让代理处理两个不同的委托者，所以下面这种写法人神共怒：
 
 
 ```objective-c
 - (void)calculatorDidCalculateValue:(CGFloat)value;
 ```
 
-默认情况下，委托对象需要实现 protocol 的方法。可以用`@required` 和  `@optional` 关键字来标记方法是否是必要的还是可选的。
+默认情况下，代理者需要实现 protocol 的方法。可以用`@required` 和  `@optional` 关键字来标记方法是否是必要的还是可选的(默认是 `@required`: 必需的)。
 
 
 ```objective-c
 @protocol ZOCSignUpViewControllerDelegate <NSObject>
 @required
-- (void)signUpViewController:(ZOCSignUpViewController *)controller didProvideSignUpInfo:(NSDictionary *);
+- (void)signUpViewController:(ZOCSignUpViewController *)controller didProvideSignUpInfo:(NSDictionary *)dict;
 @optional
 - (void)signUpViewControllerDidPressSignUpButton:(ZOCSignUpViewController *)controller;
 @end
 ```
 
-对于可选的方法，委托者必须在发送消息前检查委托是否确实实现了特定的方法（否则会 crash）：
+对于可选的方法，委托者必须在发送消息前检查代理是否确实实现了特定的方法（否则会 crash）：
 
 ```objective-c
 if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSignUpButton:)]) {
@@ -2191,15 +2171,13 @@ if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSign
 ###   继承
 
 
-有时候你可能需要重载委托方法。考虑有两个 UIViewController 子类的情况：UIViewControllerA 和 UIViewControllerB，有下面的类继承关系。
+有时候你可能需要重载代理方法。考虑有两个 UIViewController 子类的情况：UIViewControllerA 和 UIViewControllerB，有下面的类继承关系。
 
 `UIViewControllerB < UIViewControllerA < UIViewController`
 
-`UIViewControllerA` conforms to `UITableViewDelegate` and implements `- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath`.
-
 `UIViewControllerA` 遵从 `UITableViewDelegate` 并且实现了 `- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath`.
 
-你可能会想要提供一个和 `UIViewControllerB` 不同的实现。一个实现可能是这样子的：
+你可能会想要在 `UIViewControllerB` 中提供一个不同的实现，这个实现可能是这样子的：
 
 ```objective-c
 
@@ -2213,19 +2191,13 @@ if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSign
 
 ```
 
-但是如果超类(`UIViewControllerA`)没有实现这个方法呢？
-
-
-调用过程
-
-```objective-c
-[super respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]
-```
-
-会用 NSObject 的实现，寻找，在 `self` 的上下文中无疑有它的实现，但是 App 会在下一行 crash 并且报下面的错：
+但是如果超类(`UIViewControllerA`)没有实现这个方法呢？此时调用`[super respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]`方法，将使用 NSObject 的实现，在 `self` 上下文深入查找并且明确 `self` 实现了这个方法（因为 `UITableViewControllerA` 遵从 `UITableViewDelegate`），但是应用将在下一行发生崩溃，并提示如下错误信息：
 
 ```
 *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '-[UIViewControllerB tableView:heightForRowAtIndexPath:]: unrecognized selector sent to instance 0x8d82820'
+
+*** 由于未捕获异常 `NSInvalidArgumentException(无效的参数异常)`导致应用终止，理由是：向实例 ox8d82820 发送了无法识别的 selector `- [UIViewControllerB tableView:heightForRowAtIndexPath:]`
+
 ```
 
 这种情况下我们需要来询问特定的类实例是否可以响应对应的 selector。下面的代码提供了一个小技巧：
@@ -2242,7 +2214,7 @@ if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSign
 
 ```
 
-就像上面的丑陋的代码，一个委托方法也比重载方法好。
+就像上面丑陋的代码，通常它会是更好的设计架构的方式，因为这种方式代理方法不需要被重写。
 
 ###  多重委托
 
@@ -2250,21 +2222,21 @@ if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSign
 多重委托是一个非常基础的概念，但是，大多数开发者对此非常不熟悉而使用 NSNotifications。就像你可能注意到的，委托和数据源是对象之间的通讯模式，但是只涉及两个对象：委托者和委托。
 
 
-数据源模式强制一对一的关系，发送者来像一个并且只是一个对象来请求信息。但是委托模式不一样，它可以完美得有多个委托来等待回调操作。
+数据源模式强制一对一的关系，当发送者请求信息时有且只能有一个对象来响应。对于代理模式而言这会有些不同，我们有足够的理由要去实现很多代理者等待(唯一委托者的)回调的场景。
 
 
+一些情况下至少有两个对象对特定委托者的回调感兴趣，而后者(即委托者)需要知道他的所有代理。这种方法在分布式系统下更为适用并且广泛使用于大型软件的复杂信息流程中。
 
-至少两个对象需要接收来自特定委托者的回调，并且后一个需要知道所有的委托，这个方法更好的适用于分布式系统并且更加广泛用于大多数软件的复杂信息流传递。
+多重委托可以用很多方式实现，但读者更在乎找到适合自己的个人实现。Luca Bernardi 在他的 [LBDelegateMatrioska](https://github.com/lukabernardi/LBDelegateMatrioska)中提供了上述范式的一个非常简洁的实现。
 
-多重委托可以用很多方式实现，读者当然喜欢找到一个好的个人实现，一个非常灵巧的多重委托实现可以参考 Luca Bernardi  在他的 [LBDelegateMatrioska](https://github.com/lukabernardi/LBDelegateMatrioska) 的原理。
-
-
-一个基本的实现在下面给出。Cocoa 在数据结构中使用弱引用来避免引用循环，我们使用一个类来作为委托者持有委托对象的弱引用。
+这里给出一个基本的实现,方便你更好地理解这个概念。即使在Cocoa中也有一些在数据结构中保存 weak 引用来避免 引用循环的方法， 这里我们使用一个类来保留代理对象的 weak 引用(就像单一代理那样):
 
 ```objective-c
 @interface ZOCWeakObject : NSObject
 
-@property (nonatomic, weak, readonly) id object;
+@property (nonatomic, readonly, weak) id object; 
+//译者注：这里原文并没有很好地实践自己在本书之前章节所讨论的关于property属性修饰符的
+//人体工程学法则: 从左到右： 原子性 ===》 读写权限 (别名) ===》 内存管理权限符
 
 + (instancetype)weakObjectWithObject:(id)object;
 - (instancetype)initWithObject:(id)object;
@@ -2319,8 +2291,7 @@ if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSign
 ```
 
 
-一个简单的使用 weak 对象来完成多重引用的组成部分：
-
+使用 weak 对象来实现多重代理的简单组件：
 
 
 ```objective-c
@@ -2368,9 +2339,9 @@ if ([self.delegate respondsToSelector:@selector(signUpViewControllerDidPressSign
 @end
 ```
 
-在 `registerDelegate:` 和 `deregisterDelegate:` 方法的帮助下，连接/解除组成部分很简单：如果委托对象不需要接收委托者的回调，仅仅需要'unsubscribe'。
+在 `registerDelegate:` 和 `deregisterDelegate:` 方法的帮助下，连接/解除组件之间的联系很简单：在某些时间点上，如果代理不需要接收委托者的回调，仅仅需要'unsubscribe'.
 
-这在一些不同的 view 等待同一个回调来更新界面展示的时候很有用：如果 view 只是暂时隐藏（但是仍然存在），它可以仅仅需要取消对回调的订阅。
+当不同的 view 等待同一个回调来更新界面展示的时候，这很有用：如果 view 只是暂时隐藏（但是仍然存在），它仅仅需要取消对回调的订阅。
 
 
 # 面向切面编程
@@ -2380,10 +2351,10 @@ Aspect Oriented Programming (AOP，面向切面编程) 在 Objective-C 社区内
 
 引用 [Aspect Oriented Programming](http://en.wikipedia.org/wiki/Aspect-oriented_programming) 维基页面:
 
-> An aspect can alter the behavior of the base code (the non-aspect part of a program) by applying advice (additional behavior) at various join points (points in a program) specified in a quantification or query called a pointcut (that detects whether a given join point matches). (一个切面可以通过在多个 join points 中 实行 advice 改变基础代码的行为(程序的非切面的部分) )
+> An aspect can alter the behavior of the base code (the non-aspect part of a program) by applying advice (additional behavior) at various join points (points in a program) specified in a quantification or query called a pointcut (that detects whether a given join point matches). (一个切面可以通过在多个 join points 中附加的行为来改变基础代码的行为(程序的非切面的部分) )
 
 
-在 Objective-C 的世界里，这意味着使用运行时的特性来为 *切面* 增加适合的代码。通过切面增加的行为可以是：
+在 Objective-C 的世界里，这意味着使用运行时的特性来为指定的方法追加 *切面* 。切面所附加的行为可以是这样的：
 
 
 * 在类的特定方法调用前运行特定的代码
@@ -2413,6 +2384,7 @@ Aspect 的 API 有趣并且非常强大：
 比如，下面的代码会对于执行 `MyClass` 类的 `myMethod:`  (实例或者类的方法) 执行块参数。
 
 ```objective-c
+
 [MyClass aspect_hookSelector:@selector(myMethod:)
                  withOptions:AspectPositionAfter
                   usingBlock:^(id<AspectInfo> aspectInfo) {
@@ -2422,11 +2394,11 @@ Aspect 的 API 有趣并且非常强大：
 ```
 
 
-换一句话说：这个代码可以让在 `@selector` 参数对应的方法调用之后，在一个  `MyClass` 的对象上（或者在一个类本身，如果方法是一个类方法的话）执行 block 参数。
+换一句话说：任意的 `MyClass` 类型的对象(或者是类型本身当这个 @selector 方法为类方法时)的 `@selector` 方法执行完后，就会执行这个代码中块参数所提供的代码。
 
 我们为 `MyClass` 类的 `myMethod:` 方法增加了切面。
 
-通常 AOP 用来实现横向切面的完美的适用的地方是统计和日志。
+通常 AOP 被用来实现横向切面。统计与日志就是一个完美的例子。
 
 下面的例子里面，我们会用AOP用来进行统计。统计是iOS项目里面一个热门的特性，有很多选择比如 Google Analytics, Flurry, MixPanel, 等等.
 
@@ -2435,6 +2407,7 @@ Aspect 的 API 有趣并且非常强大：
 在 Ray Wenderlich 的博客里有 [文章](http://www.raywenderlich.com/53459/google-analytics-ios) 和一些示例代码，通过在你的 view controller 里面加入 [Google Analytics](https://developers.google.com/analytics/devguides/collection/ios/)  进行统计。
 
 ```objective-c
+
 - (void)logButtonPress:(UIButton *)button {
     id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
     [tracker send:[[GAIDictionaryBuilder createEventWithCategory:@"UX"
@@ -2445,9 +2418,10 @@ Aspect 的 API 有趣并且非常强大：
 ```
 
 
-上面的代码在按钮点击的时候发送了特定的上下文事件。但是当你想追踪屏幕的时候会更糟糕。
+上面的代码在按钮点击的时候发送了特定的上下文事件。但是当你想追踪屏幕的时候会变得很糟。
 
 ```objective-c
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
@@ -2461,24 +2435,25 @@ Aspect 的 API 有趣并且非常强大：
 
 
 
-你可以用 AOP 来追踪屏幕视图来修改 `viewDidAppear:`  方法。同时，我们可以用同样的方法，来在其他感兴趣的方法里面加入事件追踪，比如任何用户点击按钮的时候（比如频繁地调用IBAction）
+我们可以在类的 `viewDidAppear:` 方法上使用 AOP 来追踪屏幕，并且我们可以使用同样的方法在其他我们感兴趣的方法上添加事件追踪。比如当用户点击某个按钮时(比如:一般调用对应的 IBAction).
 
 
-这个方法是干净并且非侵入性的：
+方法很简洁且不具侵入性：
 
-* 这个 view controller 不会被不属于它的代码污染
-* 为所有加入到我们代码的切面定义一个 SPOC 文件 (single point of customization)提供了可能
-* SPOC 应该在 App 刚开始启动的时候就加入切面
+* view controller 不会被不属于它的代码污染
+* 为所有加入到我们代码的切面指定一个 SPOC 文件 (single point of customization)提供了可能
+* SPOC 应该在 App 刚开始启动的时候用来添加切面
+* 如果SPOC文件异常,至少有一个 selector 或者 类 识别不出来，应用将会在启动时崩溃(对我们来说这很酷).
 * 公司负责统计的团队通常会提供统计文档，罗列出需要追踪的事件。这个文档可以很容易映射到一个 SPOC 文件。
 * 追踪逻辑抽象化之后，扩展到很多其他统计框架会很方便
-* 对于屏幕视图，对于需要定义 selector 的方法，只需要在 SPOC 文件修改相关的类（相关的切面会加入到 `viewDidAppear:` 方法）。如果要同时发送屏幕视图和时间，一个追踪的 label 和其他元信息来提供额外数据（取决于统计提供方）
-
+* 对于屏幕视图，对于需要定义 selector 的方法，只需要在 SPOC 文件修改相关的类（相关的切面会加入到 `viewDidAppear:` 方法）。如果要同时发送屏幕视图和事件，需要（依靠统计提供方）提供一个追踪的标示或者可能还需要提供其他的元信息。
 
 
 
 我们可能希望一个 SPOC 文件类似下面的（同样的一个 .plist 文件会适配）
 
 ```objective-c
+
 NSDictionary *analyticsConfiguration()
 {
     return @{
@@ -2515,10 +2490,10 @@ NSDictionary *analyticsConfiguration()
 ```
 
 
-
-这个提及的架构在 Github 的[EF Education First](https://github.com/ef-ctx/JohnnyEnglish/blob/master/CTXUserActivityTrackingManager.m) 中托管 
+提及的架构托管 在 Github 的[EF Education First](https://github.com/ef-ctx/JohnnyEnglish/blob/master/CTXUserActivityTrackingManager.m) 中.
 
 ```objective-c
+
 - (void)setupWithConfiguration:(NSDictionary *)configuration
 {
     // screen views tracking
@@ -2528,11 +2503,13 @@ NSDictionary *analyticsConfiguration()
         [clazz aspect_hookSelector:@selector(viewDidAppear:)
                        withOptions:AspectPositionAfter
                         usingBlock:^(id<AspectInfo> aspectInfo) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                NSString *viewName = trackedScreen[@"label"];
-                [tracker trackScreenHitWithName:viewName];
-            });
-        }];
+               dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), 
+                          ^{
+                          NSString *viewName = trackedScreen[@"label"];
+                        [tracker trackScreenHitWithName:viewName];
+                      });
+                  }
+                            error:nil];
 
     }
 
@@ -2544,11 +2521,15 @@ NSDictionary *analyticsConfiguration()
         [clazz aspect_hookSelector:selektor
                        withOptions:AspectPositionAfter
                         usingBlock:^(id<AspectInfo> aspectInfo) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                UserActivityButtonPressedEvent *buttonPressEvent = [UserActivityButtonPressedEvent eventWithLabel:trackedEvents[@"label"]];
-                [tracker trackEvent:buttonPressEvent];
-            });
-        }];
+               dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), 
+                      ^{
+                            UserActivityButtonPressedEvent *buttonPressEvent = \
+                                [UserActivityButtonPressedEvent \
+                                    eventWithLabel:trackedEvents[@"label"]];
+                            [tracker trackEvent:buttonPressEvent];
+                      });
+                }
+                       error:nil];
 
     }
 }
@@ -2597,4 +2578,3 @@ NSDictionary *analyticsConfiguration()
 
 
   [1]: https://github.com/NYTimes/objective-c-style-guide/issues/6)
-
